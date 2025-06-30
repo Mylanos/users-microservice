@@ -12,22 +12,15 @@ import (
 	"github.com/google/uuid"
 )
 
-type UserRequest struct {
+type UserAPI struct {
 	ID          uuid.UUID `json:"external_id"`
 	Name        string    `json:"name"`
 	Email       string    `json:"email"`
 	DateOfBirth time.Time `json:"date_of_birth"`
 }
 
-type UserResponse struct {
-	ID          uuid.UUID `json:"external_id"`
-	Name        string    `json:"name"`
-	Email       string    `json:"email"`
-	DateOfBirth time.Time `json:"date_of_birth"`
-}
-
-func NewUserResponse(user *models.User) UserResponse {
-	return UserResponse{
+func NewUserResponse(user *models.User) UserAPI {
+	return UserAPI{
 		ID:          user.ID,
 		Name:        user.Name,
 		Email:       user.Email,
@@ -36,7 +29,7 @@ func NewUserResponse(user *models.User) UserResponse {
 }
 
 func (s *APIServer) HandleCreateUser(w http.ResponseWriter, r *http.Request) error {
-	var userRequest UserRequest
+	var userRequest UserAPI
 	if err := json.NewDecoder(r.Body).Decode(&userRequest); err != nil {
 		return models.NewWrappedError(err, models.ContextBadRequest, "request body contains malformed data")
 	}

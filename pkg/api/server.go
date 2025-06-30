@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"time"
+	"users-backend/pkg/config"
 	"users-backend/pkg/services"
 )
 
@@ -15,14 +16,17 @@ type APIResponse struct {
 }
 
 type APIServer struct {
-	listenAddr string
-	service    services.UserService
+	listenAddr   string
+	service      services.UserService
+	ReadTimeout  time.Duration
+	WriteTimeout time.Duration
+	IdleTimeout  time.Duration
 }
 
 type apiHandler func(w http.ResponseWriter, r *http.Request) error
 
-func NewAPIServer(listenAddr string, service services.UserService) *APIServer {
-	return &APIServer{listenAddr: listenAddr, service: service}
+func NewAPIServer(listenAddr string, service services.UserService, cfg *config.Config) *APIServer {
+	return &APIServer{listenAddr: listenAddr, service: service, ReadTimeout: cfg.ReadTimeout, WriteTimeout: cfg.WriteTimeout, IdleTimeout: cfg.IdleTimeout}
 }
 
 func MakeHTTPHandleFunc(f apiHandler) http.HandlerFunc {
@@ -50,7 +54,7 @@ func methodCheckMiddleware(allowedMethod string, next http.HandlerFunc) http.Han
 	}
 }
 
-func (s *APIServer) Handler() http.Handler {
+func (s *APIServer) Router() http.Handler {
 	router := http.NewServeMux()
 
 	getUserHandler := methodCheckMiddleware("GET", MakeHTTPHandleFunc(s.HandleGetUser))
@@ -62,15 +66,18 @@ func (s *APIServer) Handler() http.Handler {
 	return router
 }
 
-func (s *APIServer) Router() error {
-	server := &http.Server{
+func (s *APIServer) NewServer() *http.Server {
+	return &http.Server{
 		Addr:         s.listenAddr,
-		Handler:      s.Handler(),
-		ReadTimeout:  10 * time.Second,
-		WriteTimeout: 10 * time.Second,
-		IdleTimeout:  120 * time.Second,
+		Handler:      s.Router(),
+		ReadTimeout:  s.ReadTimeout,
+		WriteTimeout: s.WriteTimeout,
+		IdleTimeout:  s.IdleTimeout,
 	}
+}
 
+func (s *APIServer) Run() error {
+	server := s.NewServer()
 	log.Printf("Listening on %s", s.listenAddr)
 	return server.ListenAndServe()
 }

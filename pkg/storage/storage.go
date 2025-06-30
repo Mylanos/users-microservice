@@ -36,13 +36,13 @@ func NewPostgresStorage(cfg *config.Config) (*PostgresStorage, error) {
 	sqlDB.SetConnMaxLifetime(cfg.ConnMaxLifetime)
 	sqlDB.SetConnMaxIdleTime(cfg.ConnMaxIdleTime)
 
-	db.AutoMigrate(&UserDTO{})
+	db.AutoMigrate(&UserEntity{})
 
 	return &PostgresStorage{db: db}, nil
 }
 
 func (ps *PostgresStorage) CreateUser(user *models.User) error {
-	dto := &UserDTO{}
+	dto := &UserEntity{}
 	dto.FromModel(user)
 
 	tx := ps.db.Create(dto)
@@ -57,7 +57,7 @@ func (ps *PostgresStorage) CreateUser(user *models.User) error {
 }
 
 func (ps *PostgresStorage) RetrieveUser(id uuid.UUID) (*models.User, error) {
-	dto := &UserDTO{}
+	dto := &UserEntity{}
 	tx := ps.db.First(dto, id)
 	if tx.Error != nil {
 		if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
@@ -71,7 +71,7 @@ func (ps *PostgresStorage) RetrieveUser(id uuid.UUID) (*models.User, error) {
 
 func (ps *PostgresStorage) CleanupTable() error {
 	stmt := &gorm.Statement{DB: ps.db}
-	if err := stmt.Parse(UserDTO{}); err != nil {
+	if err := stmt.Parse(UserEntity{}); err != nil {
 		return fmt.Errorf("failed to parse model for table name: %w", err)
 	}
 	tableName := stmt.Schema.Table

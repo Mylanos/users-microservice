@@ -17,32 +17,32 @@ func TestUserEndpoints(t *testing.T) {
 
 	testCasesPOST := []struct {
 		name     string
-		reqData  api.UserRequest
+		reqData  api.UserAPI
 		wantCode int
 	}{
 		{
 			name:     "valid user",
-			reqData:  api.UserRequest{ID: uuid.New(), Name: "Milan", Email: "haha@google.com", DateOfBirth: time.Now().AddDate(-25, 0, 0)},
+			reqData:  api.UserAPI{ID: uuid.New(), Name: "Milan", Email: "haha@google.com", DateOfBirth: time.Now().AddDate(-25, 0, 0)},
 			wantCode: 201,
 		},
 		{
 			name:     "invalid email",
-			reqData:  api.UserRequest{ID: uuid.New(), Name: "Stefan", Email: "invalid", DateOfBirth: time.Now().AddDate(-25, 0, 0)},
+			reqData:  api.UserAPI{ID: uuid.New(), Name: "Stefan", Email: "invalid", DateOfBirth: time.Now().AddDate(-25, 0, 0)},
 			wantCode: 400,
 		},
 		{
 			name:     "duplicate email",
-			reqData:  api.UserRequest{ID: uuid.New(), Name: "Stefan", Email: "haha@google.com", DateOfBirth: time.Now().AddDate(-32, 0, 0)},
+			reqData:  api.UserAPI{ID: uuid.New(), Name: "Stefan", Email: "haha@google.com", DateOfBirth: time.Now().AddDate(-32, 0, 0)},
 			wantCode: 409,
 		},
 		{
 			name:     "future birthday",
-			reqData:  api.UserRequest{ID: uuid.New(), Name: "Milada", Email: "new@google.com", DateOfBirth: time.Now().AddDate(32, 0, 0)},
+			reqData:  api.UserAPI{ID: uuid.New(), Name: "Milada", Email: "new@google.com", DateOfBirth: time.Now().AddDate(32, 0, 0)},
 			wantCode: 400,
 		},
 		{
 			name:     "empty name",
-			reqData:  api.UserRequest{ID: uuid.New(), Name: "", Email: "else@google.com", DateOfBirth: time.Now().AddDate(-76, 0, 0)},
+			reqData:  api.UserAPI{ID: uuid.New(), Name: "", Email: "else@google.com", DateOfBirth: time.Now().AddDate(-76, 0, 0)},
 			wantCode: 400,
 		},
 	}
@@ -81,7 +81,7 @@ func TestUserEndpoints(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			parsedUUID, err := uuid.Parse(tc.reqID)
 			if err == nil {
-				createReq := api.UserRequest{
+				createReq := api.UserAPI{
 					ID:          parsedUUID,
 					Name:        "Milan",
 					Email:       "milan@test.com",

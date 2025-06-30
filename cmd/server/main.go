@@ -26,8 +26,8 @@ func main() {
 	if err != nil {
 		log.Fatalf("FATAL: failed to create a UserService: %s", err)
 	}
-	api := api.NewAPIServer(":8080", service)
-	if err := api.Router(); err != nil {
+	apiServer := api.NewAPIServer(":8080", service, cfg)
+	if err := apiServer.Run(); err != nil {
 		log.Fatalf("FATAL: could not start server: %v", err)
 	}
 }

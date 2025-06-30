@@ -28,7 +28,14 @@ type TestSuite struct {
 
 func SetupTestSuite(t *testing.T) *TestSuite {
 	cfg := &config.Config{
-		DatabaseURL: testDatabaseURL,
+		DatabaseURL:     testDatabaseURL,
+		MaxOpenConns:    25,
+		MaxIdleConns:    5,
+		ConnMaxLifetime: 5 * time.Minute,
+		ConnMaxIdleTime: 1 * time.Minute,
+		ReadTimeout:     10 * time.Second,
+		WriteTimeout:    10 * time.Second,
+		IdleTimeout:     120 * time.Second,
 	}
 
 	testStorage, err := storage.NewPostgresStorage(cfg)
@@ -41,21 +48,21 @@ func SetupTestSuite(t *testing.T) *TestSuite {
 		t.Fatalf("FATAL: failed to create test service: %v", err)
 	}
 
-	apiServer := api.NewAPIServer(":8081", testService)
-
-	httpServer := httptest.NewServer(apiServer.Handler())
-	client := &http.Client{Timeout: 10 * time.Second}
+	apiServer := api.NewAPIServer(":8081", testService, cfg)
+	httpServer := apiServer.NewServer()
+	httpTestServer := httptest.NewServer(httpServer.Handler)
+	client := &http.Client{Timeout: cfg.ReadTimeout}
 
 	return &TestSuite{
 		storage: testStorage,
 		service: testService,
 		server:  apiServer,
-		httpSrv: httpServer,
+		httpSrv: httpTestServer,
 		Client:  client,
 	}
 }
 
-// cleans up the test environment
+// clean up the test environment
 func (ts *TestSuite) Teardown(t *testing.T) {
 	if ts.httpSrv != nil {
 		ts.httpSrv.Close()

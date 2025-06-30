@@ -38,7 +38,7 @@ func ConstructResponseWithError(w http.ResponseWriter, err APIError) error {
 	return ConstructResponse(w, err.Status, response)
 }
 
-func ConstructSuccessResponse(w http.ResponseWriter, status int, data UserResponse) error {
+func ConstructSuccessResponse(w http.ResponseWriter, status int, data UserAPI) error {
 	response := APIResponse{
 		Success:   true,
 		Data:      data,

@@ -8,7 +8,7 @@ import (
 )
 
 // UserDTO represents the database structure for users
-type UserDTO struct {
+type UserEntity struct {
 	ID          uuid.UUID `gorm:"primaryKey"`
 	Name        string    `gorm:"not null"`
 	Email       string    `gorm:"uniqueIndex;not null"`
@@ -16,11 +16,11 @@ type UserDTO struct {
 	CreatedAt   time.Time `gorm:"autoCreateTime"`
 }
 
-func (UserDTO) TableName() string {
+func (UserEntity) TableName() string {
 	return "users"
 }
 
-func (dto *UserDTO) ToModel() *models.User {
+func (dto *UserEntity) ToModel() *models.User {
 	return &models.User{
 		ID:          dto.ID,
 		Name:        dto.Name,
@@ -29,7 +29,7 @@ func (dto *UserDTO) ToModel() *models.User {
 	}
 }
 
-func (dto *UserDTO) FromModel(user *models.User) {
+func (dto *UserEntity) FromModel(user *models.User) {
 	dto.ID = user.ID
 	dto.Name = user.Name
 	dto.Email = user.Email
