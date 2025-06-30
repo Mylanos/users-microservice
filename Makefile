@@ -1,11 +1,8 @@
 build:
-	@go build -o bin/app users-backend/cmd/server
+	@go build -o bin/app users-microservice/cmd/server
 
 run:
 	@docker-compose -f docker-compose.yaml up
-
-test:
-	@go test -v ./...
 
 test-db-up:
 	@docker-compose -f docker-compose.test.yaml up -d

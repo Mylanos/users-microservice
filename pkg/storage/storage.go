@@ -3,8 +3,8 @@ package storage
 import (
 	"errors"
 	"fmt"
-	"users-backend/pkg/config"
-	"users-backend/pkg/models"
+	"users-microservice/pkg/config"
+	"users-microservice/pkg/models"
 
 	"github.com/google/uuid"
 	"gorm.io/driver/postgres"

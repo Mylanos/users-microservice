@@ -2,7 +2,7 @@ package storage
 
 import (
 	"time"
-	"users-backend/pkg/models"
+	"users-microservice/pkg/models"
 
 	"github.com/google/uuid"
 )

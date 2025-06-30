@@ -3,7 +3,7 @@ package config
 import (
 	"os"
 	"time"
-	"users-backend/pkg/models"
+	"users-microservice/pkg/models"
 )
 
 type Config struct {

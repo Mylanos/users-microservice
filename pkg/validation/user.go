@@ -4,7 +4,7 @@ import (
 	"net/mail"
 	"strings"
 	"time"
-	"users-backend/pkg/models"
+	"users-microservice/pkg/models"
 )
 
 func ValidateUser(name string, email string, birthday time.Time) error {

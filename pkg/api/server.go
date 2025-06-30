@@ -4,8 +4,8 @@ import (
 	"log"
 	"net/http"
 	"time"
-	"users-backend/pkg/config"
-	"users-backend/pkg/services"
+	"users-microservice/pkg/config"
+	"users-microservice/pkg/services"
 )
 
 type APIResponse struct {

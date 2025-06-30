@@ -8,10 +8,10 @@ import (
 	"net/http/httptest"
 	"testing"
 	"time"
-	"users-backend/pkg/api"
-	"users-backend/pkg/config"
-	"users-backend/pkg/services"
-	"users-backend/pkg/storage"
+	"users-microservice/pkg/api"
+	"users-microservice/pkg/config"
+	"users-microservice/pkg/services"
+	"users-microservice/pkg/storage"
 )
 
 const (
@@ -115,6 +115,6 @@ func (ts *TestSuite) makeGETRequest(t *testing.T, url string) *http.Response {
 		t.Fatalf("Failed to make GET request: %v", err)
 	}
 
-	log.Printf("📥 GET Response: %d %s", resp.StatusCode, resp.Status)
+	log.Printf("GET Response: %d %s", resp.StatusCode, resp.Status)
 	return resp
 }

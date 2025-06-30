@@ -4,9 +4,9 @@ import (
 	"context"
 	"log"
 	"time"
-	"users-backend/pkg/models"
-	"users-backend/pkg/storage"
-	"users-backend/pkg/validation"
+	"users-microservice/pkg/models"
+	"users-microservice/pkg/storage"
+	"users-microservice/pkg/validation"
 
 	"github.com/google/uuid"
 )

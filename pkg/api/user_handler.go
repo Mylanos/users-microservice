@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"net/http"
 	"time"
-	"users-backend/pkg/models"
-	"users-backend/pkg/services"
+	"users-microservice/pkg/models"
+	"users-microservice/pkg/services"
 
 	"github.com/google/uuid"
 )

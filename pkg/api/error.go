@@ -3,7 +3,7 @@ package api
 import (
 	"errors"
 	"net/http"
-	"users-backend/pkg/models"
+	"users-microservice/pkg/models"
 )
 
 type APIError struct {

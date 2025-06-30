@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"testing"
 	"time"
-	"users-backend/pkg/api"
+	"users-microservice/pkg/api"
 
 	"github.com/google/uuid"
 )

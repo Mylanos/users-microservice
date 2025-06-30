@@ -2,10 +2,10 @@ package main
 
 import (
 	"log"
-	"users-backend/pkg/api"
-	"users-backend/pkg/config"
-	"users-backend/pkg/services"
-	"users-backend/pkg/storage"
+	"users-microservice/pkg/api"
+	"users-microservice/pkg/config"
+	"users-microservice/pkg/services"
+	"users-microservice/pkg/storage"
 
 	"github.com/joho/godotenv"
 )
