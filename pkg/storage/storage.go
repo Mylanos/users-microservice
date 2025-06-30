@@ -1,7 +1,6 @@
 package storage
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 	"users-microservice/pkg/config"
@@ -70,7 +69,9 @@ func (ps *PostgresStorage) RetrieveUser(id uuid.UUID) (*models.User, error) {
 	dto := &UserEntity{}
 	tx := ps.db.First(dto, id)
 	if tx.Error != nil {
-		if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
+		errMsg := tx.Error.Error()
+		// Check for "record not found" error
+		if strings.Contains(errMsg, "record not found") {
 			return nil, models.NewWrappedError(tx.Error, models.ContextNotFound, fmt.Sprintf("user with '%s' ID does not exist", id))
 		} else {
 			return nil, models.NewWrappedError(tx.Error, models.ContextInternalServer, fmt.Sprintf("unexpected error while searching user with '%s' ID", id))
@@ -86,12 +87,10 @@ func (ps *PostgresStorage) CleanupTable() error {
 	}
 	tableName := stmt.Schema.Table
 
-	switch ps.db.Dialector.Name() {
-	case "postgres":
-		if err := ps.db.Exec(fmt.Sprintf("TRUNCATE TABLE %s RESTART IDENTITY CASCADE;", tableName)).Error; err != nil {
-			return fmt.Errorf("failed to cleanup the table %s: %w", tableName, err)
-		}
+	if err := ps.db.Exec(fmt.Sprintf("TRUNCATE TABLE %s RESTART IDENTITY CASCADE;", tableName)).Error; err != nil {
+		return fmt.Errorf("failed to cleanup the table %s: %w", tableName, err)
 	}
+
 	return nil
 }
 
