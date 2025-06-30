@@ -3,6 +3,7 @@ package storage
 import (
 	"errors"
 	"fmt"
+	"strings"
 	"users-microservice/pkg/config"
 	"users-microservice/pkg/models"
 
@@ -22,7 +23,7 @@ type PostgresStorage struct {
 }
 
 func NewPostgresStorage(cfg *config.Config) (*PostgresStorage, error) {
-	db, err := gorm.Open(postgres.Open(cfg.DatabaseURL), &gorm.Config{TranslateError: true})
+	db, err := gorm.Open(postgres.Open(cfg.DatabaseURL), &gorm.Config{TranslateError: false})
 	if err != nil {
 		return nil, err
 	}
@@ -47,8 +48,17 @@ func (ps *PostgresStorage) CreateUser(user *models.User) error {
 
 	tx := ps.db.Create(dto)
 	if tx.Error != nil {
-		if errors.Is(tx.Error, gorm.ErrDuplicatedKey) {
-			return models.NewWrappedError(tx.Error, models.ContextConflictValue, fmt.Sprintf("email '%s' is already in use", dto.Email))
+		errMsg := tx.Error.Error()
+		// Check for PostgreSQL duplicate key constraint violations
+		if strings.Contains(errMsg, "duplicate key value violates unique constraint") {
+			if strings.Contains(errMsg, "users_pkey") {
+				return models.NewWrappedError(tx.Error, models.ContextConflictValue, fmt.Sprintf("user with ID '%s' already exists", dto.ID))
+			} else if strings.Contains(errMsg, "idx_users_email") {
+				return models.NewWrappedError(tx.Error, models.ContextConflictValue, fmt.Sprintf("email '%s' is already in use", dto.Email))
+			} else {
+				// fallback
+				return models.NewWrappedError(tx.Error, models.ContextConflictValue, "duplicate value violates unique constraint")
+			}
 		} else {
 			return models.NewWrappedError(tx.Error, models.ContextInternalServer, "unexpected error while creating new user")
 		}

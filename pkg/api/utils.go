@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 	"time"
@@ -55,6 +56,10 @@ func logError(r *http.Request, err error, duration time.Duration) {
 		err,
 		duration,
 	)
+	// Log wrapped error details if available
+	if unwrapped := errors.Unwrap(err); unwrapped != nil {
+		log.Printf("  └─ Original error: %v", unwrapped)
+	}
 }
 
 func logSuccess(r *http.Request, duration time.Duration) {
